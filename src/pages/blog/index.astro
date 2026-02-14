@@ -1,0 +1,39 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { formatDate } from "../../lib/utils";
+
+const posts = (await getCollection("blog"))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout title="Blog — Michael Fernando">
+  <section class="space-y-8">
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight">Blog</h1>
+      <p class="mt-2 text-neutral-400">Thoughts on code, building, and learning.</p>
+    </div>
+
+    <ul class="space-y-6">
+      {
+        posts.map((post) => (
+          <li>
+            <a
+              href={`/blog/${post.id}`}
+              class="group block space-y-1"
+            >
+              <h2 class="text-lg font-medium group-hover:text-neutral-300 transition-colors">
+                {post.data.title}
+              </h2>
+              <p class="text-sm text-neutral-500">{post.data.description}</p>
+              <time class="text-xs text-neutral-600" datetime={post.data.date.toISOString()}>
+                {formatDate(post.data.date)}
+              </time>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>

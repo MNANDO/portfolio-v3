@@ -1,0 +1,45 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Michael Fernando — Developer Portfolio" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body class="min-h-screen bg-neutral-950 text-neutral-100 antialiased">
+    <header class="border-b border-neutral-800">
+      <nav class="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
+        <a href="/" class="text-lg font-semibold tracking-tight hover:text-neutral-300">
+          MF
+        </a>
+        <ul class="flex gap-6 text-sm text-neutral-400">
+          <li><a href="/" class="hover:text-neutral-100 transition-colors">Home</a></li>
+          <li><a href="/blog" class="hover:text-neutral-100 transition-colors">Blog</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="mx-auto max-w-3xl px-6 py-12">
+      <slot />
+    </main>
+
+    <footer class="border-t border-neutral-800">
+      <div class="mx-auto max-w-3xl px-6 py-6 text-sm text-neutral-500">
+        &copy; {new Date().getFullYear()} Michael Fernando. All rights reserved.
+      </div>
+    </footer>
+  </body>
+</html>

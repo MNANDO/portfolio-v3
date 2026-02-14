@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Michael Fernando — Developer">
+  <section class="space-y-6">
+    <h1 class="text-4xl font-bold tracking-tight">
+      Hey, I'm Michael<span class="text-neutral-500">.</span>
+    </h1>
+    <p class="text-lg leading-relaxed text-neutral-400">
+      I'm a developer who builds things for the web. Welcome to my corner of the
+      internet where I share my work and writing.
+    </p>
+    <div class="flex gap-4 pt-2">
+      <a
+        href="/blog"
+        class="rounded-lg bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-950 transition-colors hover:bg-neutral-300"
+      >
+        Read the blog
+      </a>
+      <a
+        href="https://github.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="rounded-lg border border-neutral-700 px-4 py-2 text-sm font-medium text-neutral-300 transition-colors hover:border-neutral-500"
+      >
+        GitHub
+      </a>
+    </div>
+  </section>
+</BaseLayout>
