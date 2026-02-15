@@ -2,24 +2,37 @@ import { useState, useEffect } from "react";
 import { listPosts } from "../../lib/s3-client";
 
 interface Props {
+  idToken: string;
   onEdit: (slug: string) => void;
 }
 
-export default function PostList({ onEdit }: Props) {
+export default function PostList({ idToken, onEdit }: Props) {
   const [posts, setPosts] = useState<
     Array<{ slug: string; title: string; date: string; draft: boolean }>
   >([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    listPosts().then((p) => {
-      setPosts(p);
-      setLoading(false);
-    });
+    listPosts(idToken)
+      .then((p) => {
+        setPosts(p);
+      })
+      .catch((err) => {
+        console.error("Failed to load posts:", err);
+        setError(err instanceof Error ? err.message : "Failed to load posts");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   if (loading) {
     return <p className="text-muted-foreground">Loading posts...</p>;
+  }
+
+  if (error) {
+    return <p className="text-destructive">Error: {error}</p>;
   }
 
   if (posts.length === 0) {

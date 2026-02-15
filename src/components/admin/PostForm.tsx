@@ -3,11 +3,12 @@ import { uploadPost, fetchPost } from "../../lib/s3-client";
 import type { S3PostData } from "../../lib/s3-loader";
 
 interface Props {
+  idToken: string;
   slug: string | null;
   onSave: () => void;
 }
 
-export default function PostForm({ slug, onSave }: Props) {
+export default function PostForm({ idToken, slug, onSave }: Props) {
   const [title, setTitle] = useState("");
   const [postSlug, setPostSlug] = useState("");
   const [description, setDescription] = useState("");
@@ -30,7 +31,7 @@ export default function PostForm({ slug, onSave }: Props) {
 
   useEffect(() => {
     if (slug) {
-      fetchPost(slug).then((post) => {
+      fetchPost(idToken, slug).then((post) => {
         if (post) {
           setTitle(post.title);
           setPostSlug(post.slug);
@@ -57,7 +58,7 @@ export default function PostForm({ slug, onSave }: Props) {
         .filter(Boolean),
       html,
     };
-    await uploadPost(post);
+    await uploadPost(idToken, post);
     setSaving(false);
     onSave();
   };

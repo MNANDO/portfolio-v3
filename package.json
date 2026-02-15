@@ -11,6 +11,7 @@
   "dependencies": {
     "@astrojs/react": "^4.4.2",
     "@aws-sdk/client-s3": "^3.990.0",
+    "@aws-sdk/credential-providers": "^3.990.0",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.18",
     "@types/react": "^19.2.14",
@@ -19,9 +20,11 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.564.0",
+    "oidc-client-ts": "^3.4.1",
     "radix-ui": "^1.4.3",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "react-oidc-context": "^3.3.0",
     "tailwind-merge": "^3.4.1",
     "tailwindcss": "^4.1.18"
   },
