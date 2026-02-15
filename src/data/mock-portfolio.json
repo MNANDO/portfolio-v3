@@ -1,0 +1,40 @@
+[
+  {
+    "title": "Cloud Dashboard",
+    "description": "A real-time monitoring dashboard for cloud infrastructure built with React, D3.js, and WebSockets.",
+    "date": "2026-01-05",
+    "slug": "cloud-dashboard",
+    "image": "/portfolio/cloud-dashboard.jpg",
+    "tags": [
+      "React",
+      "D3.js",
+      "WebSockets"
+    ]
+  },
+  {
+    "title": "E-Commerce Platform",
+    "description": "A headless e-commerce platform with a custom CMS, payment processing, and inventory management.",
+    "date": "2025-08-20",
+    "slug": "ecommerce-platform",
+    "image": "/portfolio/ecommerce.jpg",
+    "tags": [
+      "Next.js",
+      "Stripe",
+      "PostgreSQL"
+    ]
+  },
+  {
+    "title": "Task Management App",
+    "description": "A collaborative task management application with real-time updates and team features.",
+    "date": "2025-03-10",
+    "slug": "task-management",
+    "image": "/portfolio/task-app.jpg",
+    "tags": [
+      "React",
+      "Node.js",
+      "MongoDB",
+      "Javascript",
+      "Typescript"
+    ]
+  }
+]

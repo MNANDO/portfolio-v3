@@ -1,0 +1,20 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PortfolioGrid from "@/components/PortfolioGrid";
+import { getAllPortfolioItems } from "@/lib/mock-loaders";
+
+const items = getAllPortfolioItems();
+---
+
+<BaseLayout title="Portfolio — Michael Hernando">
+  <section class="space-y-8">
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight">Portfolio</h1>
+      <p class="mt-2 text-muted-foreground">
+        A collection of projects I've built and contributed to.
+      </p>
+    </div>
+
+    <PortfolioGrid client:load items={items} />
+  </section>
+</BaseLayout>

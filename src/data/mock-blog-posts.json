@@ -1,0 +1,26 @@
+[
+  {
+    "slug": "building-a-modern-portfolio",
+    "title": "Building a Modern Portfolio with Astro and React",
+    "description": "A deep dive into how I built this portfolio site using Astro, React, and AWS infrastructure.",
+    "date": "2026-02-10",
+    "draft": false,
+    "tags": ["astro", "react", "aws"]
+  },
+  {
+    "slug": "typescript-patterns",
+    "title": "TypeScript Patterns I Use Every Day",
+    "description": "Practical TypeScript patterns that have improved my code quality and developer experience.",
+    "date": "2026-01-20",
+    "draft": false,
+    "tags": ["typescript", "patterns"]
+  },
+  {
+    "slug": "serverless-architecture",
+    "title": "Going Serverless: Lessons Learned",
+    "description": "What I learned migrating from traditional servers to a fully serverless architecture on AWS.",
+    "date": "2025-12-15",
+    "draft": false,
+    "tags": ["aws", "serverless"]
+  }
+]

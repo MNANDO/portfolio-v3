@@ -1,12 +1,13 @@
 ---
 import "../styles/global.css";
+import ThemeToggle from "../components/ThemeToggle";
 
 interface Props {
   title: string;
   description?: string;
 }
 
-const { title, description = "Michael Fernando — Developer Portfolio" } = Astro.props;
+const { title, description = "Michael Hernando — Developer Portfolio" } = Astro.props;
 ---
 
 <!doctype html>
@@ -18,16 +19,26 @@ const { title, description = "Michael Fernando — Developer Portfolio" } = Astr
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <script is:inline>
+      (function () {
+        const theme = localStorage.getItem("theme") || "system";
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (theme === "dark" || (theme === "system" && prefersDark)) {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
   </head>
-  <body class="min-h-screen bg-neutral-950 text-neutral-100 antialiased">
-    <header class="border-b border-neutral-800">
+  <body class="min-h-screen bg-background text-foreground antialiased">
+    <header class="border-b border-border">
       <nav class="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
-        <a href="/" class="text-lg font-semibold tracking-tight hover:text-neutral-300">
-          MF
+        <a href="/" class="text-lg font-semibold tracking-tight hover:text-foreground/70">
+          MH
         </a>
-        <ul class="flex gap-6 text-sm text-neutral-400">
-          <li><a href="/" class="hover:text-neutral-100 transition-colors">Home</a></li>
-          <li><a href="/blog" class="hover:text-neutral-100 transition-colors">Blog</a></li>
+        <ul class="flex gap-6 text-sm text-muted-foreground">
+          <li><a href="/" class="hover:text-foreground transition-colors">Home</a></li>
+          <li><a href="/portfolio" class="hover:text-foreground transition-colors">Portfolio</a></li>
+          <li><a href="/blog" class="hover:text-foreground transition-colors">Blog</a></li>
         </ul>
       </nav>
     </header>
@@ -36,9 +47,10 @@ const { title, description = "Michael Fernando — Developer Portfolio" } = Astr
       <slot />
     </main>
 
-    <footer class="border-t border-neutral-800">
-      <div class="mx-auto max-w-3xl px-6 py-6 text-sm text-neutral-500">
-        &copy; {new Date().getFullYear()} Michael Fernando. All rights reserved.
+    <footer class="border-t border-border">
+      <div class="mx-auto flex max-w-3xl items-center justify-between px-6 py-6 text-sm text-muted-foreground">
+        <span>&copy; {new Date().getFullYear()} Michael Hernando. All rights reserved.</span>
+        <ThemeToggle client:load />
       </div>
     </footer>
   </body>

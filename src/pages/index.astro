@@ -1,31 +1,78 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import BlogPostCard from "@/components/BlogPostCard";
+import ExperienceTimeline from "@/components/ExperienceTimeline.astro";
+import PortfolioCard from "@/components/PortfolioCard";
+import {
+  getLatestBlogPost,
+  getExperience,
+  getLatestPortfolioItem,
+} from "@/lib/mock-loaders";
+
+const latestPost = getLatestBlogPost();
+const experience = getExperience();
+const latestProject = getLatestPortfolioItem();
 ---
 
-<BaseLayout title="Michael Fernando — Developer">
-  <section class="space-y-6">
-    <h1 class="text-4xl font-bold tracking-tight">
-      Hey, I'm Michael<span class="text-neutral-500">.</span>
-    </h1>
-    <p class="text-lg leading-relaxed text-neutral-400">
-      I'm a developer who builds things for the web. Welcome to my corner of the
-      internet where I share my work and writing.
-    </p>
-    <div class="flex gap-4 pt-2">
-      <a
-        href="/blog"
-        class="rounded-lg bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-950 transition-colors hover:bg-neutral-300"
-      >
-        Read the blog
-      </a>
-      <a
-        href="https://github.com"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="rounded-lg border border-neutral-700 px-4 py-2 text-sm font-medium text-neutral-300 transition-colors hover:border-neutral-500"
-      >
-        GitHub
-      </a>
-    </div>
-  </section>
+<BaseLayout title="Michael Hernando — Developer">
+  <div class="space-y-16">
+    <section class="flex flex-col items-center gap-8 md:flex-row md:items-center md:gap-12">
+      <img
+        src="https://michaelhernando.com/wp-content/uploads/2023/10/profile-scaled.jpg"
+        alt="Michael Hernando"
+        class="h-40 w-40 shrink-0 rounded-full object-cover md:h-48 md:w-48"
+      />
+      <div class="min-w-0 flex-1 space-y-6 text-center md:text-left">
+        <h1 class="text-4xl font-bold tracking-tight">
+          Hi, I'm Mike<span class="text-muted-foreground">.</span>
+        </h1>
+        <p class="text-lg leading-relaxed text-muted-foreground">
+          I'm a developer who builds things for the web. Welcome to my corner of the
+          internet where I share my work and writing.
+        </p>
+        <div class="flex justify-center gap-4 pt-2 md:justify-start">
+          <a
+            href="/blog"
+            class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            Read my blog
+          </a>
+          <a
+            href="https://github.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="rounded-lg border border-input px-4 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:border-ring"
+          >
+            GitHub
+          </a>
+        </div>
+      </div>
+    </section>
+
+    {latestPost && (
+      <section class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-2xl font-bold tracking-tight">Recent Post</h2>
+          <a href="/blog" class="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+            View all posts &rarr;
+          </a>
+        </div>
+        <BlogPostCard post={latestPost} />
+      </section>
+    )}
+
+    {experience.length > 0 && <ExperienceTimeline items={experience} />}
+
+    {latestProject && (
+      <section class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-2xl font-bold tracking-tight">Latest Work</h2>
+          <a href="/portfolio" class="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+            View all projects &rarr;
+          </a>
+        </div>
+        <PortfolioCard item={latestProject} />
+      </section>
+    )}
+  </div>
 </BaseLayout>

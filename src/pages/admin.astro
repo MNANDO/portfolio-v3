@@ -1,0 +1,8 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import AdminApp from "../components/admin/AdminApp";
+---
+
+<BaseLayout title="Admin — Blog Editor">
+  <AdminApp client:only="react" />
+</BaseLayout>

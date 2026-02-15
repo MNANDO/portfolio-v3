@@ -1,8 +1,8 @@
 import { defineCollection, z } from "astro:content";
-import { glob } from "astro/loaders";
+import { s3BlogLoader } from "./lib/s3-loader";
 
 const blog = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/blog" }),
+  loader: s3BlogLoader(),
   schema: z.object({
     title: z.string(),
     description: z.string(),
