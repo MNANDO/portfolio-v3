@@ -10,9 +10,9 @@ export interface S3PostData {
   title: string;
   description: string;
   date: string;
-  draft: boolean;
   tags: string[];
   html: string;
+  editorState?: string;
 }
 
 export function s3BlogLoader(): Loader {
@@ -21,22 +21,18 @@ export function s3BlogLoader(): Loader {
     load: async (context) => {
       const { store, logger, parseData } = context;
 
-      const client = new S3Client({
-        region: import.meta.env.AWS_REGION ?? "us-east-1",
-        credentials: {
-          accessKeyId: import.meta.env.AWS_ACCESS_KEY_ID,
-          secretAccessKey: import.meta.env.AWS_SECRET_ACCESS_KEY,
-        },
-      });
+      const bucket = import.meta.env.PUBLIC_S3_ASSETS_BUCKET;
 
-      const bucket = import.meta.env.S3_BLOG_BUCKET;
-
-      if (!import.meta.env.AWS_ACCESS_KEY_ID || !bucket) {
+      if (!bucket) {
         logger.warn(
-          "S3 credentials or bucket not configured — skipping blog post fetch"
+          "PUBLIC_S3_ASSETS_BUCKET not configured — skipping blog post fetch"
         );
         return;
       }
+
+      const client = new S3Client({
+        region: import.meta.env.PUBLIC_AWS_REGION ?? "us-east-1",
+      });
 
       logger.info("Fetching blog posts from S3...");
       store.clear();
@@ -68,7 +64,6 @@ export function s3BlogLoader(): Loader {
             title: post.title,
             description: post.description,
             date: post.date,
-            draft: post.draft,
             tags: post.tags,
           },
         });

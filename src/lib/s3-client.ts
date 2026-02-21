@@ -62,7 +62,7 @@ export async function fetchPost(
 export async function listPosts(
 	idToken: string,
 ): Promise<
-	Array<{ slug: string; title: string; date: string; draft: boolean }>
+	Array<{ slug: string; title: string; date: string }>
 > {
 	const client = createClient(idToken);
 	const result = await client.send(
@@ -85,7 +85,6 @@ export async function listPosts(
 						slug: data.slug,
 						title: data.title,
 						date: data.date,
-						draft: data.draft,
 					}
 				: null;
 		}),
@@ -94,7 +93,7 @@ export async function listPosts(
 	return posts.filter(
 		(
 			p,
-		): p is { slug: string; title: string; date: string; draft: boolean } =>
+		): p is { slug: string; title: string; date: string } =>
 			p !== null,
 	);
 }

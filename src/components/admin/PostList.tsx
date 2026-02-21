@@ -8,7 +8,7 @@ interface Props {
 
 export default function PostList({ idToken, onEdit }: Props) {
   const [posts, setPosts] = useState<
-    Array<{ slug: string; title: string; date: string; draft: boolean }>
+    Array<{ slug: string; title: string; date: string }>
   >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -48,9 +48,6 @@ export default function PostList({ idToken, onEdit }: Props) {
         >
           <div>
             <span className="font-medium">{post.title}</span>
-            {post.draft && (
-              <span className="ml-2 text-xs text-yellow-500">(draft)</span>
-            )}
           </div>
           <button
             onClick={() => onEdit(post.slug)}

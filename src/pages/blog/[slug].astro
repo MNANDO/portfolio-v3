@@ -35,6 +35,6 @@ const { post } = Astro.props;
       )}
     </header>
 
-    <div class="prose prose-invert max-w-none" set:html={post.body} />
+    <div set:html={post.body} />
   </article>
 </BaseLayout>
