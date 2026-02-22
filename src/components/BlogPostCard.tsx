@@ -7,11 +7,11 @@ import {
 	CardDescription,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import type { BlogPost } from '@/lib/mock-loaders';
+import type { PostManifestEntry } from '@/lib/s3-loader';
 import { formatDate } from '@/lib/utils';
 
 interface Props {
-	post: BlogPost;
+	post: PostManifestEntry;
 }
 
 export default function BlogPostCard({ post }: Props) {

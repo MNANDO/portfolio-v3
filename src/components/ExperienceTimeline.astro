@@ -1,5 +1,5 @@
 ---
-import type { ExperienceItem } from "@/lib/mock-loaders";
+import type { ExperienceItem } from "@/lib/s3-loader";
 
 interface Props {
   items: ExperienceItem[];
@@ -7,13 +7,13 @@ interface Props {
 
 const { items } = Astro.props;
 
-function formatRange(start: string, end: string | null): string {
+function formatRange(from: string, to?: string): string {
   const fmt = (d: string) => {
     const [year, month] = d.split("-");
     const date = new Date(Number(year), Number(month) - 1);
     return date.toLocaleDateString("en-US", { year: "numeric", month: "short" });
   };
-  return `${fmt(start)} — ${end ? fmt(end) : "Present"}`;
+  return `${fmt(from)} — ${to ? fmt(to) : "Present"}`;
 }
 ---
 
@@ -28,21 +28,29 @@ function formatRange(start: string, end: string | null): string {
           <div class="absolute left-5 top-12 bottom-0 w-px bg-border" />
         )}
 
-        {/* Logo placeholder */}
-        <div class="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-xs font-bold text-muted-foreground">
-          {item.company.slice(0, 2).toUpperCase()}
+        {/* Logo */}
+        <div class="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-muted overflow-hidden">
+          {item.company_logo ? (
+            <img src={item.company_logo} alt={item.company} class="h-full w-full object-cover" />
+          ) : (
+            <span class="text-xs font-bold text-muted-foreground">
+              {item.company.slice(0, 2).toUpperCase()}
+            </span>
+          )}
         </div>
 
         {/* Content */}
         <div class="min-w-0 flex-1 space-y-1 pt-0.5">
           <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-            <h3 class="font-semibold">{item.role}</h3>
+            <h3 class="font-semibold">{item.title}</h3>
             <span class="text-sm text-muted-foreground">
-              {formatRange(item.startDate, item.endDate)}
+              {formatRange(item.date_from, item.date_to)}
             </span>
           </div>
           <p class="text-sm font-medium text-muted-foreground">{item.company}</p>
-          <p class="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
+          {item.description && (
+            <p class="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
+          )}
         </div>
       </div>
     ))}

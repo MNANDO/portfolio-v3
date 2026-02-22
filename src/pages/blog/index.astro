@@ -1,9 +1,9 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import BlogGrid from "@/components/BlogGrid";
-import { getAllBlogPosts } from "@/lib/mock-loaders";
+import { loadPosts } from "@/lib/s3-loader";
 
-const posts = getAllBlogPosts();
+const posts = await loadPosts();
 ---
 
 <BaseLayout title="Blog — Michael Hernando">
@@ -13,6 +13,6 @@ const posts = getAllBlogPosts();
       <p class="mt-2 text-muted-foreground">Thoughts on code, building, and learning.</p>
     </div>
 
-    <BlogGrid posts={posts} client:load />
+    <BlogGrid client:load posts={posts} />
   </section>
 </BaseLayout>

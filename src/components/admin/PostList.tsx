@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { listPosts } from "../../lib/s3-client";
+import type { PostManifestEntry } from "../../lib/s3-loader";
+import { Button } from "../ui/button";
 
 interface Props {
   idToken: string;
@@ -7,9 +9,7 @@ interface Props {
 }
 
 export default function PostList({ idToken, onEdit }: Props) {
-  const [posts, setPosts] = useState<
-    Array<{ slug: string; title: string; date: string }>
-  >([]);
+  const [posts, setPosts] = useState<PostManifestEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -49,12 +49,9 @@ export default function PostList({ idToken, onEdit }: Props) {
           <div>
             <span className="font-medium">{post.title}</span>
           </div>
-          <button
-            onClick={() => onEdit(post.slug)}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
+          <Button variant="ghost" size="sm" onClick={() => onEdit(post.slug)}>
             Edit
-          </button>
+          </Button>
         </li>
       ))}
     </ul>

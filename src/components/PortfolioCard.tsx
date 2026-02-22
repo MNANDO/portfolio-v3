@@ -7,7 +7,7 @@ import {
 	CardDescription,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import type { PortfolioItem } from '@/lib/mock-loaders';
+import type { PortfolioItem } from '@/lib/s3-loader';
 import { formatDate } from '@/lib/utils';
 
 interface Props {
@@ -16,18 +16,22 @@ interface Props {
 
 export default function PortfolioCard({ item }: Props) {
 	return (
-		<a href={`/portfolio/${item.slug}`} className="group block">
+		<a href={item.link} target="_blank" rel="noopener noreferrer" className="group block">
 			<Card className="overflow-hidden pt-0 transition-colors hover:border-ring hover:bg-accent/50">
-				<div className="flex h-48 items-center justify-center bg-muted">
-					<span className="text-sm text-muted-foreground">
-						Project Preview
-					</span>
-				</div>
+				{item.thumbnail ? (
+					<img
+						src={item.thumbnail}
+						alt={item.description}
+						className="h-48 w-full object-cover"
+					/>
+				) : (
+					<div className="flex h-48 items-center justify-center bg-muted">
+						<span className="text-sm text-muted-foreground">Project Preview</span>
+					</div>
+				)}
 				<CardHeader>
 					<CardDescription>
-						<time dateTime={item.date}>
-							{formatDate(new Date(item.date))}
-						</time>
+						<time dateTime={item.date}>{formatDate(new Date(item.date))}</time>
 					</CardDescription>
 					<CardTitle className="text-xl group-hover:text-primary transition-colors">
 						{item.title}

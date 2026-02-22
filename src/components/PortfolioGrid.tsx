@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import GridFilters from '@/components/GridFilters';
 import PortfolioCard from '@/components/PortfolioCard';
-import type { PortfolioItem } from '@/lib/mock-loaders';
+import type { PortfolioItem } from '@/lib/s3-loader';
 
 interface Props {
 	items: PortfolioItem[];
@@ -23,10 +23,9 @@ export default function PortfolioGrid({ items }: Props) {
 
 		if (search) {
 			const query = search.toLowerCase();
-			result = result.filter(
-				(item) =>
-					item.title.toLowerCase().includes(query) ||
-					item.description.toLowerCase().includes(query),
+			result = result.filter((item) =>
+				item.title.toLowerCase().includes(query) ||
+				item.description.toLowerCase().includes(query),
 			);
 		}
 
@@ -72,7 +71,7 @@ export default function PortfolioGrid({ items }: Props) {
 			) : (
 				<div className="space-y-6">
 					{filteredItems.map((item) => (
-						<PortfolioCard key={item.slug} item={item} />
+						<PortfolioCard key={item.link} item={item} />
 					))}
 				</div>
 			)}

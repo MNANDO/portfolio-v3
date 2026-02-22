@@ -1,9 +1,9 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PortfolioGrid from "@/components/PortfolioGrid";
-import { getAllPortfolioItems } from "@/lib/mock-loaders";
+import { loadPortfolio } from "@/lib/s3-loader";
 
-const items = getAllPortfolioItems();
+const items = await loadPortfolio();
 ---
 
 <BaseLayout title="Portfolio — Michael Hernando">

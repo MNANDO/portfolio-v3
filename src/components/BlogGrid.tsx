@@ -1,10 +1,10 @@
 import { useState, useMemo } from 'react';
 import GridFilters from '@/components/GridFilters';
 import BlogPostCard from '@/components/BlogPostCard';
-import type { BlogPost } from '@/lib/mock-loaders';
+import type { PostManifestEntry } from '@/lib/s3-loader';
 
 interface Props {
-	posts: BlogPost[];
+	posts: PostManifestEntry[];
 }
 
 export default function BlogGrid({ posts }: Props) {
@@ -64,7 +64,6 @@ export default function BlogGrid({ posts }: Props) {
 				}
 			/>
 
-			{/* Grid */}
 			{filteredPosts.length === 0 ? (
 				<p className="py-12 text-center text-muted-foreground">
 					No posts found.
