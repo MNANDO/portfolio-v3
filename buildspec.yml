@@ -5,8 +5,7 @@ phases:
     runtime-versions:
       nodejs: "22"
     commands:
-      - corepack enable
-      - corepack prepare pnpm@10.17.1 --activate
+      - npm install -g pnpm@10.17.1
       - pnpm install --frozen-lockfile
 
   build:
@@ -25,8 +24,3 @@ artifacts:
   files:
     - "**/*"
   base-directory: dist
-
-cache:
-  paths:
-    - node_modules/.pnpm-store/**/*
-    - node_modules/**/*
