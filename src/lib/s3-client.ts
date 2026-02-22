@@ -5,7 +5,13 @@ import {
 	DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
 import { fromCognitoIdentityPool } from '@aws-sdk/credential-providers';
-import type { PostManifestEntry, S3PostData, PortfolioItem, ExperienceItem, HomeContent } from './s3-loader';
+import type {
+	PostManifestEntry,
+	S3PostData,
+	PortfolioItem,
+	ExperienceItem,
+	HomeContent,
+} from './s3-loader';
 
 const REGION = import.meta.env.PUBLIC_AWS_REGION ?? 'us-east-1';
 const BUCKET = import.meta.env.PUBLIC_S3_ASSETS_BUCKET;
@@ -27,9 +33,7 @@ function createClient(idToken: string): S3Client {
 	});
 }
 
-async function fetchManifest(
-	client: S3Client,
-): Promise<PostManifestEntry[]> {
+async function fetchManifest(client: S3Client): Promise<PostManifestEntry[]> {
 	try {
 		const result = await client.send(
 			new GetObjectCommand({ Bucket: BUCKET, Key: MANIFEST_KEY }),
@@ -106,17 +110,12 @@ export async function fetchPost(
 	}
 }
 
-export async function listPosts(
-	idToken: string,
-): Promise<PostManifestEntry[]> {
+export async function listPosts(idToken: string): Promise<PostManifestEntry[]> {
 	const client = createClient(idToken);
 	return fetchManifest(client);
 }
 
-export async function deletePost(
-	idToken: string,
-	slug: string,
-): Promise<void> {
+export async function deletePost(idToken: string, slug: string): Promise<void> {
 	const client = createClient(idToken);
 
 	await client.send(
@@ -127,14 +126,22 @@ export async function deletePost(
 	);
 
 	const manifest = await fetchManifest(client);
-	await saveManifest(client, manifest.filter((e) => e.slug !== slug));
+	await saveManifest(
+		client,
+		manifest.filter((e) => e.slug !== slug),
+	);
 }
 
-export async function fetchPortfolio(idToken: string): Promise<PortfolioItem[]> {
+export async function fetchPortfolio(
+	idToken: string,
+): Promise<PortfolioItem[]> {
 	const client = createClient(idToken);
 	try {
 		const result = await client.send(
-			new GetObjectCommand({ Bucket: BUCKET, Key: 'portfolio/portfolio.json' }),
+			new GetObjectCommand({
+				Bucket: BUCKET,
+				Key: 'portfolio/portfolio.json',
+			}),
 		);
 		const body = await result.Body!.transformToString();
 		return JSON.parse(body) as PortfolioItem[];
@@ -143,7 +150,10 @@ export async function fetchPortfolio(idToken: string): Promise<PortfolioItem[]> 
 	}
 }
 
-export async function savePortfolio(idToken: string, items: PortfolioItem[]): Promise<void> {
+export async function savePortfolio(
+	idToken: string,
+	items: PortfolioItem[],
+): Promise<void> {
 	const client = createClient(idToken);
 	await client.send(
 		new PutObjectCommand({
@@ -155,11 +165,16 @@ export async function savePortfolio(idToken: string, items: PortfolioItem[]): Pr
 	);
 }
 
-export async function fetchExperience(idToken: string): Promise<ExperienceItem[]> {
+export async function fetchExperience(
+	idToken: string,
+): Promise<ExperienceItem[]> {
 	const client = createClient(idToken);
 	try {
 		const result = await client.send(
-			new GetObjectCommand({ Bucket: BUCKET, Key: 'experience/experience.json' }),
+			new GetObjectCommand({
+				Bucket: BUCKET,
+				Key: 'experience/experience.json',
+			}),
 		);
 		const body = await result.Body!.transformToString();
 		return JSON.parse(body) as ExperienceItem[];
@@ -168,7 +183,10 @@ export async function fetchExperience(idToken: string): Promise<ExperienceItem[]
 	}
 }
 
-export async function saveExperience(idToken: string, items: ExperienceItem[]): Promise<void> {
+export async function saveExperience(
+	idToken: string,
+	items: ExperienceItem[],
+): Promise<void> {
 	const client = createClient(idToken);
 	await client.send(
 		new PutObjectCommand({
@@ -180,7 +198,10 @@ export async function saveExperience(idToken: string, items: ExperienceItem[]): 
 	);
 }
 
-export async function uploadMedia(idToken: string, file: File): Promise<string> {
+export async function uploadMedia(
+	idToken: string,
+	file: File,
+): Promise<string> {
 	const client = createClient(idToken);
 	const ext = file.name.split('.').pop() ?? 'jpg';
 	const key = `media/profile.${ext}`;
@@ -195,11 +216,13 @@ export async function uploadMedia(idToken: string, file: File): Promise<string> 
 		}),
 	);
 
-	const cloudfrontUrl = import.meta.env.PUBLIC_CLOUDFRONT_URL;
+	const cloudfrontUrl = import.meta.env.PUBLIC_ASSETS_CLOUDFRONT_URL;
 	return `${cloudfrontUrl}/${key}`;
 }
 
-export async function fetchHomeContent(idToken: string): Promise<HomeContent | null> {
+export async function fetchHomeContent(
+	idToken: string,
+): Promise<HomeContent | null> {
 	const client = createClient(idToken);
 	try {
 		const result = await client.send(
@@ -212,7 +235,10 @@ export async function fetchHomeContent(idToken: string): Promise<HomeContent | n
 	}
 }
 
-export async function saveHomeContent(idToken: string, content: HomeContent): Promise<void> {
+export async function saveHomeContent(
+	idToken: string,
+	content: HomeContent,
+): Promise<void> {
 	const client = createClient(idToken);
 	await client.send(
 		new PutObjectCommand({
