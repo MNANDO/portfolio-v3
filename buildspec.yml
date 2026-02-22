@@ -10,7 +10,6 @@ phases:
 
   build:
     commands:
-      - ulimit -n 8192
       - pnpm build
 
   post_build:
