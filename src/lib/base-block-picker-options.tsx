@@ -27,6 +27,7 @@ import {
 	INSERT_UNORDERED_LIST_COMMAND,
 } from '@lexical/list';
 import { INSERT_HORIZONTAL_RULE_COMMAND } from '@lexical/react/LexicalHorizontalRuleNode';
+import { OPEN_INSERT_IMAGE_DIALOG_COMMAND } from '@/components/editor/extensions/image-extension';
 import { BlockPickerOption } from './BlockPickerOption';
 
 export const baseBlockPickerOptions: BlockPickerOption[] = [
@@ -173,6 +174,17 @@ export const baseBlockPickerOptions: BlockPickerOption[] = [
 		category: 'alignment',
 		insert: ({ editor }) => {
 			editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'right');
+		},
+	}),
+	new BlockPickerOption({
+		id: 'image',
+		title: 'Image',
+		// eslint-disable-next-line jsx-a11y/alt-text
+		icon: <Image />,
+		keywords: ['image', 'img', 'picture', 'photo'],
+		category: 'advanced',
+		insert: ({ editor }) => {
+			editor.dispatchCommand(OPEN_INSERT_IMAGE_DIALOG_COMMAND, undefined);
 		},
 	}),
 ];

@@ -3,8 +3,7 @@ import { uploadPost, fetchPost } from '../../lib/s3-client';
 import type { S3PostData } from '../../lib/s3-loader';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { EditorView } from '../editor/editor-view';
-import { useCreateEditor } from '../../hooks/use-create-editor';
+import { PostEditor } from './PostEditor';
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
 import { $getRoot, $insertNodes } from 'lexical';
 import type { EditorState, LexicalEditor } from 'lexical';
@@ -29,20 +28,18 @@ function PostFormInner({ idToken, slug, onSave, initialData }: PostFormInnerProp
 	const [saving, setSaving] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const editor = useCreateEditor({
-		initialEditorState: initialData?.editorState
-			? initialData.editorState
-			: initialData?.html
-				? (lexicalEditor: LexicalEditor) => {
-						const parser = new DOMParser();
-						const dom = parser.parseFromString(initialData.html, 'text/html');
-						const nodes = $generateNodesFromDOM(lexicalEditor, dom);
-						$getRoot().clear();
-						$getRoot().select();
-						$insertNodes(nodes);
-					}
-				: undefined,
-	});
+	const initialEditorState = initialData?.editorState
+		? initialData.editorState
+		: initialData?.html
+			? (lexicalEditor: LexicalEditor) => {
+					const parser = new DOMParser();
+					const dom = parser.parseFromString(initialData.html, 'text/html');
+					const nodes = $generateNodesFromDOM(lexicalEditor, dom);
+					$getRoot().clear();
+					$getRoot().select();
+					$insertNodes(nodes);
+				}
+			: undefined;
 
 	useEffect(() => {
 		if (!slug) {
@@ -168,8 +165,9 @@ function PostFormInner({ idToken, slug, onSave, initialData }: PostFormInnerProp
 					Content
 				</label>
 				<div className="rounded-md border border-input bg-background">
-					<EditorView
-						editor={editor}
+					<PostEditor
+						idToken={idToken}
+						initialEditorState={initialEditorState}
 						onChange={handleEditorChange}
 						placeholder="Start writing your post..."
 					/>

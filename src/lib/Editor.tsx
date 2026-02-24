@@ -18,6 +18,7 @@ import { editorTheme } from './default-theme';
 import { ReactExtension } from '@lexical/react/ReactExtension';
 import type { BlockPickerOption } from './BlockPickerOption';
 import { baseBlockPickerOptions } from './base-block-picker-options';
+import { ImageNode } from '@/components/editor/nodes/image-node';
 import BlockPickerPlugin from '@/components/editor/editor-block-picker-plugin';
 
 export interface EditorOptions {
@@ -49,7 +50,7 @@ export class Editor {
 		this._lexicalExtension = defineExtension({
 			name,
 			$initialEditorState: initialEditorState,
-			nodes: [...baseNodes, ...nodes],
+			nodes: [...baseNodes, ImageNode, ...nodes],
 			dependencies: [
 				HorizontalRuleExtension,
 				ListExtension,

@@ -612,7 +612,6 @@ function EditorToolbar({
 		<div
 			ref={setPopupRef}
 			className="absolute z-50 flex items-center gap-0.5 rounded-md border bg-popover p-1 shadow-md animate-in fade-in-0 zoom-in-95 slide-in-from-bottom-2 duration-150"
-			onMouseDown={(e) => e.preventDefault()}
 		>
 			{/* Block picker dropdown */}
 			<DropdownMenu>
