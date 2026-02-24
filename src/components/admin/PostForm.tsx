@@ -27,6 +27,7 @@ function PostFormInner({ idToken, slug, onSave, initialData }: PostFormInnerProp
 	const [html, setHtml] = useState(initialData?.html ?? '');
 	const [editorState, setEditorState] = useState(initialData?.editorState ?? '');
 	const [saving, setSaving] = useState(false);
+	const [error, setError] = useState<string | null>(null);
 
 	const editor = useCreateEditor({
 		initialEditorState: initialData?.editorState
@@ -66,6 +67,7 @@ function PostFormInner({ idToken, slug, onSave, initialData }: PostFormInnerProp
 
 	const handleSave = async () => {
 		setSaving(true);
+		setError(null);
 		const post: S3PostData = {
 			slug: postSlug,
 			title,
@@ -78,9 +80,14 @@ function PostFormInner({ idToken, slug, onSave, initialData }: PostFormInnerProp
 			html,
 			editorState,
 		};
-		await uploadPost(idToken, post);
-		setSaving(false);
-		onSave();
+		try {
+			await uploadPost(idToken, post);
+			onSave();
+		} catch (err) {
+			setError(err instanceof Error ? err.message : 'Failed to save');
+		} finally {
+			setSaving(false);
+		}
 	};
 
 	return (
@@ -91,6 +98,7 @@ function PostFormInner({ idToken, slug, onSave, initialData }: PostFormInnerProp
 			}}
 			className="space-y-4"
 		>
+			{error && <p className="text-destructive text-sm">{error}</p>}
 			<div className="space-y-1.5">
 				<label
 					htmlFor="title"
