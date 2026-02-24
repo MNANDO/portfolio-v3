@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { fetchExperience, saveExperience } from '../../lib/s3-client';
+import { useState, useEffect, useRef } from 'react';
+import { fetchExperience, saveExperience, uploadMedia } from '../../lib/s3-client';
 import type { ExperienceItem } from '../../lib/s3-loader';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -20,16 +20,36 @@ const EMPTY_ITEM: ExperienceItem = {
 
 interface ItemFormProps {
 	item: ExperienceItem;
+	idToken: string;
 	onSave: (item: ExperienceItem) => void;
 	onCancel: () => void;
 	saving: boolean;
 }
 
-function ItemForm({ item, onSave, onCancel, saving }: ItemFormProps) {
+function ItemForm({ item, idToken, onSave, onCancel, saving }: ItemFormProps) {
 	const [form, setForm] = useState<ExperienceItem>({ ...item });
+	const [uploading, setUploading] = useState(false);
+	const [uploadError, setUploadError] = useState<string | null>(null);
+	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const set = (field: keyof ExperienceItem, value: string | undefined) =>
 		setForm((f) => ({ ...f, [field]: value }));
+
+	const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (!file) return;
+		setUploading(true);
+		setUploadError(null);
+		try {
+			const url = await uploadMedia(idToken, file, `media/experience/${Date.now()}`);
+			set('company_logo', url);
+		} catch (err) {
+			setUploadError(err instanceof Error ? err.message : 'Upload failed');
+		} finally {
+			setUploading(false);
+			if (fileInputRef.current) fileInputRef.current.value = '';
+		}
+	};
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -42,9 +62,31 @@ function ItemForm({ item, onSave, onCancel, saving }: ItemFormProps) {
 
 	return (
 		<form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-border p-4">
-			<div className="space-y-1.5">
-				<label className="text-sm font-medium text-foreground">Company Logo URL</label>
-				<Input value={form.company_logo} onChange={(e) => set('company_logo', e.target.value)} required />
+			<div className="space-y-3">
+				<label className="text-sm font-medium text-foreground">Company Logo</label>
+				{form.company_logo && (
+					<img
+						src={form.company_logo}
+						alt="Company logo preview"
+						className="h-16 w-16 rounded-md object-contain border border-border"
+					/>
+				)}
+				{uploadError && <p className="text-destructive text-sm">{uploadError}</p>}
+				<div className="flex items-center gap-2">
+					<Input
+						ref={fileInputRef}
+						type="file"
+						accept="image/*"
+						className="cursor-pointer"
+						onChange={handleUpload}
+						disabled={uploading}
+					/>
+					{uploading && <span className="text-sm text-muted-foreground shrink-0">Uploading...</span>}
+				</div>
+				<div className="space-y-1.5">
+					<label className="text-sm text-muted-foreground">Or paste a URL</label>
+					<Input value={form.company_logo} onChange={(e) => set('company_logo', e.target.value)} />
+				</div>
 			</div>
 			<div className="space-y-1.5">
 				<label className="text-sm font-medium text-foreground">Title</label>
@@ -132,6 +174,7 @@ export default function ExperienceManager({ idToken }: Props) {
 			{editingIndex !== null ? (
 				<ItemForm
 					item={editingIndex === 'new' ? EMPTY_ITEM : items[editingIndex]}
+					idToken={idToken}
 					onSave={handleSave}
 					onCancel={() => setEditingIndex(null)}
 					saving={saving}

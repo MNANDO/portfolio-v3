@@ -201,10 +201,11 @@ export async function saveExperience(
 export async function uploadMedia(
 	idToken: string,
 	file: File,
+	keyPath?: string,
 ): Promise<string> {
 	const client = createClient(idToken);
 	const ext = file.name.split('.').pop() ?? 'jpg';
-	const key = `media/profile.${ext}`;
+	const key = keyPath ? `${keyPath}.${ext}` : `media/profile.${ext}`;
 
 	const buffer = await file.arrayBuffer();
 	await client.send(

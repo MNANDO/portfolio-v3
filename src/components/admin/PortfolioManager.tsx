@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { fetchPortfolio, savePortfolio } from '../../lib/s3-client';
+import { useState, useEffect, useRef } from 'react';
+import { fetchPortfolio, savePortfolio, uploadMedia } from '../../lib/s3-client';
 import type { PortfolioItem } from '../../lib/s3-loader';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -20,19 +20,39 @@ const EMPTY_ITEM: PortfolioItem = {
 
 interface ItemFormProps {
 	item: PortfolioItem;
+	idToken: string;
 	onSave: (item: PortfolioItem) => void;
 	onCancel: () => void;
 	saving: boolean;
 }
 
-function ItemForm({ item, onSave, onCancel, saving }: ItemFormProps) {
+function ItemForm({ item, idToken, onSave, onCancel, saving }: ItemFormProps) {
 	const [form, setForm] = useState<PortfolioItem & { tagsRaw: string }>({
 		...item,
 		tagsRaw: item.tags.join(', '),
 	});
+	const [uploading, setUploading] = useState(false);
+	const [uploadError, setUploadError] = useState<string | null>(null);
+	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const set = (field: string, value: string) =>
 		setForm((f) => ({ ...f, [field]: value }));
+
+	const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (!file) return;
+		setUploading(true);
+		setUploadError(null);
+		try {
+			const url = await uploadMedia(idToken, file, `media/portfolio/${Date.now()}`);
+			set('thumbnail', url);
+		} catch (err) {
+			setUploadError(err instanceof Error ? err.message : 'Upload failed');
+		} finally {
+			setUploading(false);
+			if (fileInputRef.current) fileInputRef.current.value = '';
+		}
+	};
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -55,9 +75,31 @@ function ItemForm({ item, onSave, onCancel, saving }: ItemFormProps) {
 				<label className="text-sm font-medium text-foreground">Title</label>
 				<Input value={form.title} onChange={(e) => set('title', e.target.value)} required />
 			</div>
-			<div className="space-y-1.5">
-				<label className="text-sm font-medium text-foreground">Thumbnail URL</label>
-				<Input value={form.thumbnail} onChange={(e) => set('thumbnail', e.target.value)} required />
+			<div className="space-y-3">
+				<label className="text-sm font-medium text-foreground">Thumbnail</label>
+				{form.thumbnail && (
+					<img
+						src={form.thumbnail}
+						alt="Thumbnail preview"
+						className="h-24 w-24 rounded-md object-cover border border-border"
+					/>
+				)}
+				{uploadError && <p className="text-destructive text-sm">{uploadError}</p>}
+				<div className="flex items-center gap-2">
+					<Input
+						ref={fileInputRef}
+						type="file"
+						accept="image/*"
+						className="cursor-pointer"
+						onChange={handleUpload}
+						disabled={uploading}
+					/>
+					{uploading && <span className="text-sm text-muted-foreground shrink-0">Uploading...</span>}
+				</div>
+				<div className="space-y-1.5">
+					<label className="text-sm text-muted-foreground">Or paste a URL</label>
+					<Input value={form.thumbnail} onChange={(e) => set('thumbnail', e.target.value)} />
+				</div>
 			</div>
 			<div className="space-y-1.5">
 				<label className="text-sm font-medium text-foreground">Date</label>
@@ -139,6 +181,7 @@ export default function PortfolioManager({ idToken }: Props) {
 			{editingIndex !== null ? (
 				<ItemForm
 					item={editingIndex === 'new' ? EMPTY_ITEM : items[editingIndex]}
+					idToken={idToken}
 					onSave={handleSave}
 					onCancel={() => setEditingIndex(null)}
 					saving={saving}
