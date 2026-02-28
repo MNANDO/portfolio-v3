@@ -1,12 +1,15 @@
-import {
-	$applyNodeReplacement,
-	DecoratorNode,
+import type {
 	DOMExportOutput,
 	EditorConfig,
 	LexicalNode,
 	NodeKey,
 	SerializedLexicalNode,
 	Spread,
+	LexicalCommand,
+} from 'lexical';
+import {
+	$applyNodeReplacement,
+	DecoratorNode,
 	$getNodeByKey,
 	$getSelection,
 	$isNodeSelection,
@@ -17,7 +20,6 @@ import {
 	DRAGSTART_COMMAND,
 	KEY_ESCAPE_COMMAND,
 	SELECTION_CHANGE_COMMAND,
-	LexicalCommand,
 } from 'lexical';
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -25,8 +27,7 @@ import { useLexicalEditable } from '@lexical/react/useLexicalEditable';
 import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection';
 import { mergeRegister } from '@lexical/utils';
 import {
-	JSX,
-	Suspense,
+	type JSX,
 	useCallback,
 	useEffect,
 	useMemo,
@@ -36,50 +37,6 @@ import {
 
 export const RIGHT_CLICK_IMAGE_COMMAND: LexicalCommand<MouseEvent> =
 	createCommand('RIGHT_CLICK_IMAGE_COMMAND');
-
-type ImageStatus =
-	| { error: true }
-	| { error: false; width: number; height: number };
-
-const imageCache = new Map<string, Promise<ImageStatus> | ImageStatus>();
-
-function useSuspenseImage(src: string): ImageStatus {
-	let cached = imageCache.get(src);
-	if (cached && 'error' in cached && typeof cached.error === 'boolean') {
-		return cached;
-	}
-	if (!cached) {
-		cached = new Promise<ImageStatus>((resolve) => {
-			const img = new Image();
-			img.src = src;
-			img.onload = () =>
-				resolve({
-					error: false,
-					height: img.naturalHeight,
-					width: img.naturalWidth,
-				});
-			img.onerror = () => resolve({ error: true });
-		}).then((result) => {
-			imageCache.set(src, result);
-			return result;
-		});
-		imageCache.set(src, cached);
-		throw cached;
-	}
-	throw cached;
-}
-
-function BrokenImage(): JSX.Element {
-	return (
-		// eslint-disable-next-line @next/next/no-img-element
-		<img
-			src="/images/image-broken.svg"
-			style={{ height: 200, opacity: 0.2, width: 200 }}
-			draggable="false"
-			alt="Broken image"
-		/>
-	);
-}
 
 function LazyImage({
 	altText,
@@ -100,18 +57,6 @@ function LazyImage({
 	width: 'inherit' | number;
 	onError: () => void;
 }): JSX.Element {
-	const status = useSuspenseImage(src);
-
-	useEffect(() => {
-		if (status.error) {
-			onError();
-		}
-	}, [status.error, onError]);
-
-	if (status.error) {
-		return <BrokenImage />;
-	}
-
 	return (
 		// eslint-disable-next-line @next/next/no-img-element
 		<img
@@ -413,36 +358,30 @@ export default function ImageNodeDecorator({
 	const isFocused = (isSelected || isResizing) && isEditable;
 
 	return (
-		<Suspense fallback={null}>
-			<div draggable={draggable} className="relative inline-block">
-				{isLoadError ? (
-					<BrokenImage />
-				) : (
-					<LazyImage
-						className={
-							isFocused
-								? `focused ${isInNodeSelection ? 'draggable' : ''}`
-								: null
-						}
-						src={src}
-						altText={altText}
-						imageRef={imageRef}
-						width={width}
-						height={height}
-						maxWidth={maxWidth}
-						onError={() => setIsLoadError(true)}
-					/>
-				)}
-				{resizable && isInNodeSelection && isFocused && (
-					<ImageResizer
-						imageRef={imageRef}
-						maxWidth={maxWidth}
-						onResizeStart={onResizeStart}
-						onResizeEnd={onResizeEnd}
-					/>
-				)}
-			</div>
-		</Suspense>
+		<div draggable={draggable} className="relative inline-block">
+			<LazyImage
+				className={
+					isFocused
+						? `focused ${isInNodeSelection ? 'draggable' : ''}`
+						: null
+				}
+				src={src}
+				altText={altText}
+				imageRef={imageRef}
+				width={width}
+				height={height}
+				maxWidth={maxWidth}
+				onError={() => setIsLoadError(true)}
+			/>
+			{resizable && isInNodeSelection && isFocused && (
+				<ImageResizer
+					imageRef={imageRef}
+					maxWidth={maxWidth}
+					onResizeStart={onResizeStart}
+					onResizeEnd={onResizeEnd}
+				/>
+			)}
+		</div>
 	);
 }
 
@@ -558,17 +497,15 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
 
 	decorate(): JSX.Element {
 		return (
-			<Suspense fallback={null}>
-				<ImageNodeDecorator
-					src={this.__src}
-					altText={this.__altText}
-					width={this.__width}
-					height={this.__height}
-					maxWidth={this.__maxWidth}
-					nodeKey={this.getKey()}
-					resizable={true}
-				/>
-			</Suspense>
+			<ImageNodeDecorator
+				src={this.__src}
+				altText={this.__altText}
+				width={this.__width}
+				height={this.__height}
+				maxWidth={this.__maxWidth}
+				nodeKey={this.getKey()}
+				resizable={true}
+			/>
 		);
 	}
 

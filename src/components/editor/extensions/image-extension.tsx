@@ -4,6 +4,7 @@ import type { JSX } from 'react';
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $wrapNodeInElement, mergeRegister } from '@lexical/utils';
+import type { LexicalCommand, LexicalEditor } from 'lexical';
 import {
 	$createParagraphNode,
 	$insertNodes,
@@ -12,20 +13,19 @@ import {
 	configExtension,
 	createCommand,
 	defineExtension,
-	LexicalCommand,
-	LexicalEditor,
 } from 'lexical';
-import {
+import type {
 	ChangeEvent,
 	DragEvent as ReactDragEvent,
-	FormEvent,
-	useCallback,
-	useEffect,
-	useRef,
-	useState,
+	SubmitEvent,
 } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { $createImageNode, ImageNode, ImagePayload } from '../nodes/image-node';
+import {
+	$createImageNode,
+	ImageNode,
+	type ImagePayload,
+} from '../nodes/image-node';
 import {
 	Dialog,
 	DialogContent,
@@ -183,7 +183,7 @@ export function InsertImageDialog({
 		if (f) handleFile(f);
 	}
 
-	async function handleSubmit(e: FormEvent) {
+	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
 		if (!file || !onUploadImage) return;
 
