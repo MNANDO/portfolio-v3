@@ -185,6 +185,7 @@ export function InsertImageDialog({
 
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
+		e.stopPropagation();
 		if (!file || !onUploadImage) return;
 
 		setIsUploading(true);

@@ -1,6 +1,10 @@
 'use client';
 
-import type { EditorState, InitialEditorStateType, LexicalEditor } from 'lexical';
+import type {
+	EditorState,
+	InitialEditorStateType,
+	LexicalEditor,
+} from 'lexical';
 import { useCreateEditor } from '@/hooks/use-create-editor';
 import { EditorView } from '@/components/editor/editor-view';
 import { ImageExtension } from '@/components/editor/extensions/image-extension';

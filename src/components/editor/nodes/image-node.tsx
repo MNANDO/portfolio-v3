@@ -212,7 +212,7 @@ export default function ImageNodeDecorator({
 	const activeEditorRef = useRef<
 		ReturnType<typeof useLexicalComposerContext>[0] | null
 	>(null);
-	const [isLoadError, setIsLoadError] = useState(false);
+	const [, setIsLoadError] = useState(false);
 	const isEditable = useLexicalEditable();
 
 	const isInNodeSelection = useMemo(
