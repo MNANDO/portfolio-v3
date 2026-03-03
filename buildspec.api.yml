@@ -1,0 +1,32 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: "22"
+    commands:
+      - npm install -g pnpm@10.17.1
+      - cd api && pnpm install --frozen-lockfile
+
+  build:
+    commands:
+      - cd api && pnpm build
+
+  post_build:
+    commands:
+      - |
+        if [ $CODEBUILD_BUILD_SUCCEEDING -eq 1 ]; then
+          echo "Deploying Lambda functions..."
+          for handler in createPost getPost listPosts updatePost deletePost; do
+            echo "Packaging $handler..."
+            cd api/dist/$handler
+            zip -r ../../../${handler}.zip .
+            cd /codebuild/output/src*/src
+            aws lambda update-function-code \
+              --function-name $handler \
+              --zip-file fileb://${handler}.zip
+          done
+          echo "All Lambda functions deployed."
+        else
+          echo "Build failed — skipping deploy."
+        fi
