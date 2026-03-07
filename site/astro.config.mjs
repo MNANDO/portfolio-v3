@@ -6,14 +6,14 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [react()],
-
-  vite: {
-    plugins: [tailwindcss()],
-    build: {
-      rollupOptions: {
-        maxParallelFileOps: 20
-      }
-    }
-  }
+	integrations: [react()],
+	site: 'https://michaelhernando.com',
+	vite: {
+		plugins: [tailwindcss()],
+		build: {
+			rollupOptions: {
+				maxParallelFileOps: 20,
+			},
+		},
+	},
 });

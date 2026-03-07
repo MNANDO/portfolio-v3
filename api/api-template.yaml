@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Portfolio API - Lambda and API Gateway
+
+Globals:
+  Function:
+    Runtime: nodejs20.x
+    Timeout: 10
+    MemorySize: 256
+
+Resources:
+
+  PortfolioApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: portfolio-api
+      StageName: prod
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,Authorization'"
+        AllowOrigin: "'*'"
+
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handler.handler
+      CodeUri: dist/
+      Events:
+        Health:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PortfolioApi
+            Path: /health
+            Method: GET
+        CatchAll:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PortfolioApi
+            Path: /{proxy+}
+            Method: ANY
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub "https://${PortfolioApi}.execute-api.${AWS::Region}.amazonaws.com/prod"

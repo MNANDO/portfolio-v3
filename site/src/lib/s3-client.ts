@@ -217,7 +217,7 @@ export async function uploadMedia(
 		}),
 	);
 
-	const cloudfrontUrl = import.meta.env.PUBLIC_ASSETS_CLOUDFRONT_URL;
+	const cloudfrontUrl = import.meta.env.PUBLIC_SITE_URL;
 	return `${cloudfrontUrl}/${key}`;
 }
 

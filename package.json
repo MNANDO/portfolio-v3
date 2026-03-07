@@ -1,9 +1,8 @@
 {
   "name": "portfolio-v3",
   "version": "1.0.0",
-  "description": "",
-  "keywords": [],
-  "author": "",
+  "description": "Source code for michaelhernando.com",
+  "author": "Michael Hernando",
   "license": "ISC",
   "packageManager": "pnpm@10.17.1"
 }
